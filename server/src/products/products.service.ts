@@ -29,7 +29,7 @@ export class ProductsService {
     }
   }
 
-  private getValueByFilterBy(filterBy: FilterBy, filterValue: string) {
+  private getFilterValueByFilterBy(filterBy: FilterBy, filterValue: string) {
     switch (filterBy) {
       case FilterBy.StoreId:
         return +filterValue;
@@ -53,7 +53,10 @@ export class ProductsService {
             .where(
               `${this.getColumnByFilterBy(filterBy)} ${filterInequality ? '<>' : '='} :filterValue`,
               {
-                filterValue: this.getValueByFilterBy(filterBy, filterValue),
+                filterValue: this.getFilterValueByFilterBy(
+                  filterBy,
+                  filterValue,
+                ),
               },
             )
             .skip(offset)

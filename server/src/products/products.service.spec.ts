@@ -233,10 +233,10 @@ describe('ProductsService', () => {
       );
     });
 
-    it('getValueByFilterBy should handle default string return for invalid filterBy', () => {
-      expect(service['getValueByFilterBy']('invalid' as any, 'value')).toEqual(
-        'value',
-      );
+    it('getFilterValueByFilterBy should handle default string return for invalid filterBy', () => {
+      expect(
+        service['getFilterValueByFilterBy']('invalid' as any, 'value'),
+      ).toEqual('value');
     });
   });
 });

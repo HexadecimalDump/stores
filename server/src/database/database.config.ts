@@ -13,6 +13,7 @@ const AppDataSource = new DataSource({
   entities: ['**/*.entity.ts'],
   migrations: ['src/database/migrations/*-migration.ts'],
   migrationsRun: false,
+  migrationsTransactionMode: 'each',
   logging: true,
 });
 
