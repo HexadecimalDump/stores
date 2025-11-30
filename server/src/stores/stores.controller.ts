@@ -54,7 +54,7 @@ export class StoresController {
     return this.storesService.update(id, body);
   }
 
-  @ApiOperation({ description: 'Get store by id' })
+  @ApiOperation({ description: 'Delete store by id' })
   @ApiAcceptedResponse()
   @Delete('/:id')
   async deleteOneById(@Param('id') id: number) {
