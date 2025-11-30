@@ -16,8 +16,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
-import { ApiOkResponsePaginated } from 'src/shared/decorators/api-ok-response-paginated';
-import { Product } from 'src/database/entities/product.entity';
+import { ApiOkResponsePaginated } from '../shared/decorators/api-ok-response-paginated';
+import { Product } from '../database/entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginatedProductsQueryDto } from './dto/paginated-products-query.dto';

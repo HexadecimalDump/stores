@@ -4,10 +4,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Store } from 'src/database/entities/store.entity';
+import { Store } from '../database/entities/store.entity';
 import { Repository } from 'typeorm';
 import { StoreDto } from './dto/create-store.dto';
-import { ProductsService } from 'src/products/products.service';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class StoresService {

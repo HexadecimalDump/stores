@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { DatabaseConfigurationKeys } from 'src/config/types';
+import { DatabaseConfigurationKeys } from '../../config/types';
 
 export const getDatabaseConfig = (configService: ConfigService) => ({
   type: 'postgres' as const,

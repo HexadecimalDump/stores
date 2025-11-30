@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateIf,
 } from 'class-validator';
-import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
+import { PaginatedQueryDto } from '../../shared/dto/paginated-query.dto';
 
 export enum FilterBy {
   StoreId = 'StoreId',

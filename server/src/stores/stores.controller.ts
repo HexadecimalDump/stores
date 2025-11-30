@@ -15,11 +15,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { Store } from 'src/database/entities/store.entity';
-import { ApiOkResponsePaginated } from 'src/shared/decorators/api-ok-response-paginated';
-import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
+import { Store } from '../database/entities/store.entity';
+import { ApiOkResponsePaginated } from '../shared/decorators/api-ok-response-paginated';
+import { PaginatedQueryDto } from '../shared/dto/paginated-query.dto';
 import { StoreDto } from './dto/create-store.dto';
-import { Product } from 'src/database/entities/product.entity';
+import { Product } from '../database/entities/product.entity';
 
 @Controller('stores')
 @ApiTags('Stores')
