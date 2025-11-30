@@ -102,4 +102,21 @@ export class StoresService {
 
     return product;
   }
+
+  async getAggregatedStockQuantity(storeId: number): Promise<number> {
+    await this.findOne(storeId);
+
+    const result = await this.storesRepository
+      .createQueryBuilder('store')
+      .leftJoin('store.products', 'product')
+      .select('store.*')
+      .addSelect('SUM(product.qty)', 'totalQty')
+      .where('store.id = :storeId', { storeId })
+      .groupBy('store.id')
+      .getRawOne<{ totalQty: string }>();
+
+    const totalQty = Number(result?.totalQty) || 0;
+
+    return totalQty;
+  }
 }

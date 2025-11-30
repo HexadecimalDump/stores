@@ -80,4 +80,13 @@ export class StoresController {
   ) {
     return this.storesService.deleteProductFromStore(storeId, productId);
   }
+
+  @ApiOperation({ description: 'Get total quantity of product of store' })
+  @ApiOkResponse()
+  @Get('/:id/products-quantity')
+  async getTotalProductsQuantity(@Param('id') id: number) {
+    return {
+      totalQty: await this.storesService.getAggregatedStockQuantity(id),
+    };
+  }
 }

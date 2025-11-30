@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, ValidateIf } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
 
 export enum FilterBy {
@@ -16,4 +23,15 @@ export class PaginatedProductsQueryDto extends PaginatedQueryDto {
   @IsString()
   @ValidateIf(({ filterBy }) => Boolean(filterBy))
   filterValue?: string;
+
+  @ApiProperty({ required: false })
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+
+    return false;
+  })
+  @ValidateIf(({ filterBy }) => Boolean(filterBy))
+  @IsOptional()
+  filterInequality?: boolean;
 }

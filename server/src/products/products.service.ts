@@ -43,15 +43,19 @@ export class ProductsService {
     offset = 0,
     filterBy,
     filterValue,
+    filterInequality = false,
   }: PaginatedProductsQueryDto) {
     const [results, total] =
       filterBy && filterValue
         ? await this.productsRepository
             .createQueryBuilder('product')
             .innerJoin('product.stores', 'store')
-            .where(`${this.getColumnByFilterBy(filterBy)} = :filterValue`, {
-              filterValue: this.getValueByFilterBy(filterBy, filterValue),
-            })
+            .where(
+              `${this.getColumnByFilterBy(filterBy)} ${filterInequality ? '<>' : '='} :filterValue`,
+              {
+                filterValue: this.getValueByFilterBy(filterBy, filterValue),
+              },
+            )
             .skip(offset)
             .take(limit)
             .getManyAndCount()
