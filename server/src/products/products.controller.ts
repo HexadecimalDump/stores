@@ -18,9 +18,9 @@ import {
 import { ProductsService } from './products.service';
 import { ApiOkResponsePaginated } from 'src/shared/decorators/api-ok-response-paginated';
 import { Product } from 'src/database/entities/product.entity';
-import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginatedProductsQueryDto } from './dto/paginated-products-query.dto';
 
 @Controller('products')
 @ApiTags('Products')
@@ -30,8 +30,8 @@ export class ProductsController {
   @ApiOperation({ description: 'Get all products' })
   @ApiOkResponsePaginated(Product)
   @Get()
-  async getAll(@Query() { limit = 10, offset = 0 }: PaginatedQueryDto) {
-    return this.productsService.findAll(limit, offset);
+  async getAll(@Query() query: PaginatedProductsQueryDto) {
+    return this.productsService.findAll(query);
   }
 
   @ApiOperation({ description: 'Get product by id' })

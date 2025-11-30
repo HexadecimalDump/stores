@@ -1,14 +1,20 @@
-import { NotFoundException, Injectable } from '@nestjs/common';
+import {
+  NotFoundException,
+  Injectable,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from 'src/database/entities/store.entity';
 import { Repository } from 'typeorm';
 import { StoreDto } from './dto/create-store.dto';
+import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class StoresService {
   constructor(
     @InjectRepository(Store)
-    private storesRepository: Repository<Store>,
+    private readonly storesRepository: Repository<Store>,
+    private readonly productsService: ProductsService,
   ) {}
 
   async findAll(limit: number, offset: number) {
@@ -52,5 +58,48 @@ export class StoresService {
     await this.storesRepository.delete({ id });
 
     return store;
+  }
+
+  async addProductToStore(storeId: number, productId: number) {
+    const store = await this.findOne(storeId);
+
+    const product = await this.productsService.findOne(productId);
+
+    const productInStore = await this.productsService.getProductInStore(
+      product.id,
+      store.id,
+    );
+
+    if (productInStore) return productInStore;
+
+    await this.storesRepository
+      .createQueryBuilder()
+      .relation(Store, 'products')
+      .of(storeId)
+      .add(productId);
+
+    return product;
+  }
+
+  async deleteProductFromStore(storeId: number, productId: number) {
+    const store = await this.findOne(storeId);
+
+    const product = await this.productsService.findOne(productId);
+
+    const productInStore = await this.productsService.getProductInStore(
+      product.id,
+      store.id,
+    );
+
+    if (!productInStore)
+      throw new BadRequestException('Product is not assigned to store');
+
+    await this.storesRepository
+      .createQueryBuilder()
+      .relation(Store, 'products')
+      .of(storeId)
+      .remove(productId);
+
+    return product;
   }
 }

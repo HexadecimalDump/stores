@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import {
-  ApiAcceptedResponse,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -20,6 +19,7 @@ import { Store } from 'src/database/entities/store.entity';
 import { ApiOkResponsePaginated } from 'src/shared/decorators/api-ok-response-paginated';
 import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
 import { StoreDto } from './dto/create-store.dto';
+import { Product } from 'src/database/entities/product.entity';
 
 @Controller('stores')
 @ApiTags('Stores')
@@ -55,9 +55,29 @@ export class StoresController {
   }
 
   @ApiOperation({ description: 'Delete store by id' })
-  @ApiAcceptedResponse()
+  @ApiOkResponse({ type: Store })
   @Delete('/:id')
   async deleteOneById(@Param('id') id: number) {
     return this.storesService.delete(id);
+  }
+
+  @ApiOperation({ description: 'Add product ot store' })
+  @ApiOkResponse({ type: Product })
+  @Post('/:storeId/products/:productId')
+  async addProductToStore(
+    @Param('storeId') storeId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.storesService.addProductToStore(storeId, productId);
+  }
+
+  @ApiOperation({ description: 'Add product ot store' })
+  @ApiOkResponse({ type: Product })
+  @Delete('/:storeId/products/:productId')
+  async deleteProductFromStore(
+    @Param('storeId') storeId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.storesService.deleteProductFromStore(storeId, productId);
   }
 }

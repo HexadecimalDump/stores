@@ -1,6 +1,7 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Store } from './store.entity';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -19,4 +20,7 @@ export class Product extends BaseEntity {
   @Column('integer')
   @ApiProperty()
   qty: number;
+
+  @ManyToMany(() => Store, (store) => store.products)
+  stores: Store[];
 }
