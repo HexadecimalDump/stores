@@ -1,0 +1,5 @@
+# DB data
+db_data/
+
+# Editor configuration
+.vscode
