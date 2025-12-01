@@ -89,4 +89,14 @@ export class StoresController {
       totalQty: await this.storesService.getAggregatedStockQuantity(id),
     };
   }
+
+  @ApiOperation({ description: 'Get products available to add for store' })
+  @ApiOkResponsePaginated(Product)
+  @Get('/:storeId/available-products')
+  async getAvailableProducts(
+    @Param('storeId') storeId: number,
+    @Query() query: PaginatedQueryDto,
+  ) {
+    return this.storesService.getAvailableProducts(storeId, query);
+  }
 }

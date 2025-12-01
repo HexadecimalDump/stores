@@ -8,6 +8,7 @@ import { Store } from '../database/entities/store.entity';
 import { Repository } from 'typeorm';
 import { StoreDto } from './dto/create-store.dto';
 import { ProductsService } from '../products/products.service';
+import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
 
 @Injectable()
 export class StoresService {
@@ -118,5 +119,11 @@ export class StoresService {
     const totalQty = Number(result?.totalQty) || 0;
 
     return totalQty;
+  }
+
+  async getAvailableProducts(storeId: number, query: PaginatedQueryDto) {
+    await this.findOne(storeId);
+
+    return this.productsService.findProductsNotInStore(storeId, query);
   }
 }

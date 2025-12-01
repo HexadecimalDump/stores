@@ -11,7 +11,10 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import {
   FilterBy,
   PaginatedProductsQueryDto,
+  SortBy,
+  SortDirection,
 } from './dto/paginated-products-query.dto';
+import { PaginatedQueryDto } from 'src/shared/dto/paginated-query.dto';
 
 @Injectable()
 export class ProductsService {
@@ -43,29 +46,26 @@ export class ProductsService {
     offset = 0,
     filterBy,
     filterValue,
-    filterInequality = false,
+    sortBy = SortBy.ID,
+    sortDirection = SortDirection.Asc,
   }: PaginatedProductsQueryDto) {
-    const [results, total] =
-      filterBy && filterValue
-        ? await this.productsRepository
-            .createQueryBuilder('product')
-            .innerJoin('product.stores', 'store')
-            .where(
-              `${this.getColumnByFilterBy(filterBy)} ${filterInequality ? '<>' : '='} :filterValue`,
-              {
-                filterValue: this.getFilterValueByFilterBy(
-                  filterBy,
-                  filterValue,
-                ),
-              },
-            )
-            .skip(offset)
-            .take(limit)
-            .getManyAndCount()
-        : await this.productsRepository.findAndCount({
-            skip: offset,
-            take: limit,
-          });
+    let query = this.productsRepository
+      .createQueryBuilder('product')
+      .leftJoin('product.stores', 'store');
+
+    if (filterBy && filterValue)
+      query = query.where(
+        `${this.getColumnByFilterBy(filterBy)} = :filterValue`,
+        {
+          filterValue: this.getFilterValueByFilterBy(filterBy, filterValue),
+        },
+      );
+
+    const [results, total] = await query
+      .skip(offset)
+      .take(limit)
+      .orderBy(`product.${sortBy.toLowerCase()}`, sortDirection)
+      .getManyAndCount();
 
     return { limit, offset, total, results };
   }
@@ -118,5 +118,25 @@ export class ProductsService {
       .getOne();
 
     return product;
+  }
+
+  async findProductsNotInStore(
+    storeId: number,
+    { limit = 10, offset = 0 }: PaginatedQueryDto,
+  ) {
+    const assignedProductsSubquery = this.productsRepository
+      .createQueryBuilder('product')
+      .select('product.id')
+      .innerJoin('product.stores', 'store', 'store.id = :storeId', { storeId });
+
+    const [results, total] = await this.productsRepository
+      .createQueryBuilder('product')
+      .where(`product.id NOT IN (${assignedProductsSubquery.getQuery()})`)
+      .setParameters(assignedProductsSubquery.getParameters())
+      .skip(offset)
+      .take(limit)
+      .getManyAndCount();
+
+    return { limit, offset, total, results };
   }
 }

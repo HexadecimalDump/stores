@@ -8,6 +8,11 @@ async function bootstrap() {
   const logger = new Logger();
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  // Should be more well defined for production environment
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
 
   /* Swagger */
   const config = new DocumentBuilder()

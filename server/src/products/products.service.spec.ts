@@ -73,38 +73,18 @@ describe('ProductsService', () => {
     const mockCount = 2;
 
     it('should return paginated results without filters', async () => {
-      repository.findAndCount.mockResolvedValue([mockProducts, mockCount]);
-      const query = { limit: 2, offset: 0 };
-
-      const result = await service.findAll(query);
-
-      expect(result).toEqual({
-        limit: 2,
-        offset: 0,
-        total: 2,
-        results: mockProducts,
-      });
-      expect(repository.findAndCount).toHaveBeenCalledWith({
-        skip: 0,
-        take: 2,
-      });
-    });
-
-    it('should return paginated results with storeId filter', async () => {
       const query = {
         limit: 10,
         offset: 0,
-        filterBy: FilterBy.StoreId,
-        filterValue: '101',
-        filterInequality: false,
       };
 
       // Mock the QueryBuilder chain
       const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
         getManyAndCount: jest.fn().mockResolvedValue([mockProducts, mockCount]),
       };
       repository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
@@ -118,7 +98,42 @@ describe('ProductsService', () => {
         results: mockProducts,
       });
       expect(repository.createQueryBuilder).toHaveBeenCalledWith('product');
-      expect(mockQueryBuilder.innerJoin).toHaveBeenCalledWith(
+      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith(
+        'product.stores',
+        'store',
+      );
+      expect(mockQueryBuilder.where).not.toHaveBeenCalled();
+    });
+
+    it('should return paginated results with storeId filter', async () => {
+      const query = {
+        limit: 10,
+        offset: 0,
+        filterBy: FilterBy.StoreId,
+        filterValue: '101',
+      };
+
+      // Mock the QueryBuilder chain
+      const mockQueryBuilder = {
+        leftJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([mockProducts, mockCount]),
+      };
+      repository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.findAll(query);
+
+      expect(result).toEqual({
+        limit: 10,
+        offset: 0,
+        total: 2,
+        results: mockProducts,
+      });
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('product');
+      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith(
         'product.stores',
         'store',
       );
