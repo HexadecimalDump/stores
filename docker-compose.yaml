@@ -30,7 +30,16 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: sh -c "npm run migration:run && npm run start:prod" # Adjust start:prod as needed
-    
+    command: sh -c "npm run migration:run && npm run start:prod"
+  web:
+    environment:
+      REACT_APP_API_URL: http://server:8080
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
 volumes:
   db_data:
